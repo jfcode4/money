@@ -1,0 +1,8 @@
+# Date	from	to	amount	description
+2020-01-05	in:salary	as:cash	100	First salary
+2020-01-05	as:cash	ex:food	12.04	Meal
+
+2020-01-08	as:cash	ex:transportation	42.50	Train
+
+2020-02-14	as:cash	as:bank:kbc	20	Deposit
+
