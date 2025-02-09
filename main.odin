@@ -3,7 +3,7 @@ package main
 import "core:fmt"
 import "core:os"
 
-config : struct {
+Config :: struct {
 	filename: string,
 	command: enum {
 		Balance, Register, Export, Print
@@ -11,12 +11,19 @@ config : struct {
 	account: string
 }
 
+ConfigError :: string
+
 
 main :: proc() {
-	parse_args()
+	config, config_err := parse_args()
+	if config_err != "" {
+		fmt.eprintln(config_err)
+		os.exit(1)
+	}
 	ledger, err := ledger_parse(config.filename)
-	if err.code != nil {
+	if err.code != .None {
 		fmt.eprintfln("Error reading file %s: line %d: %s", config.filename, err.line_number, err.code)
+		os.exit(1)
 	}
 	switch config.command {
 	case .Balance:
@@ -30,7 +37,7 @@ main :: proc() {
 	}
 }
 
-parse_args :: proc() {
+parse_args :: proc() -> (config: Config, err: ConfigError) {
 	config.filename = "ledger.tsv"
 	for i := 1; i < len(os.args); i+=1 {
 		arg := os.args[i]
@@ -40,8 +47,8 @@ parse_args :: proc() {
 				i+=1
 				continue
 			} else {
-				fmt.eprintln("-f: no file given")
-				os.exit(1)
+				err = "-f: no file given"
+				return
 			}
 		} else if arg == "balance" || arg == "bal" {
 			config.command = .Balance
@@ -62,8 +69,9 @@ parse_args :: proc() {
 		} else if arg == "print" {
 			config.command = .Print
 		} else {
-			fmt.eprintfln("Unknown command: %s", arg)
-			os.exit(1)
+			err = fmt.aprintf("Unknown command: %s", arg)
+			return
 		}
 	}
+	return
 }

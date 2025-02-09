@@ -16,6 +16,7 @@ Entry :: struct {
 }
 ParseError :: struct {
 	code: enum {
+		None,
 		CannotReadFile,
 		InvalidDate,
 		InvalidAmount,
