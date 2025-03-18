@@ -35,6 +35,7 @@ main :: proc() {
 	case .Print:
 		print_ledger(ledger)
 	}
+	free_all(context.temp_allocator)
 }
 
 parse_args :: proc() -> (config: Config, err: ConfigError) {

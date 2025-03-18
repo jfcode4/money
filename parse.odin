@@ -11,7 +11,7 @@ Entry :: struct {
 	date: datetime.Date,
 	from: string, // debit account
 	to:   string, // credit account
-	amount:  u64, // in fractions of 1000
+	amount:  i64, // in fractions of 1000
 	description: string
 }
 ParseError :: struct {
@@ -43,7 +43,7 @@ parse_date :: proc(s: string) -> (date: datetime.Date, ok: bool) {
 	return
 }
 
-parse_amount :: proc(s: string) -> (amount: u64, ok: bool) {
+parse_amount :: proc(s: string) -> (amount: i64, ok: bool) {
 	head, _, tail := strings.partition(s, ".")
 	units := strconv.parse_u64(head) or_return
 	frac1, frac2, frac3: u64
@@ -56,7 +56,7 @@ parse_amount :: proc(s: string) -> (amount: u64, ok: bool) {
 	if len(tail) > 2 {
 		frac3 = strconv.parse_u64(tail[2:3]) or_return
 	}
-	amount = units*1000 + frac1 * 100 + frac2 * 10 + frac3
+	amount = i64(units*1000 + frac1 * 100 + frac2 * 10 + frac3)
 	ok = true
 	return
 }

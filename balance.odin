@@ -34,10 +34,10 @@ balance_command :: proc(l: Ledger, account_filter: string) {
 	for entry in l {
 		buf: [10]string
 		for account in parent_accounts(entry.from, &buf) {
-			accounts[account] -= i64(entry.amount)
+			accounts[account] -= entry.amount
 		}
 		for account in parent_accounts(entry.to, &buf) {
-			accounts[account] += i64(entry.amount)
+			accounts[account] += entry.amount
 		}
 	}
 	keys := slice.map_keys(accounts) or_else []string{}
@@ -47,7 +47,7 @@ balance_command :: proc(l: Ledger, account_filter: string) {
 		if accounts[key] == 0 {
 			continue
 		}
-		fmt.printf("% 11d.%2d  ", accounts[key]/1000, abs(accounts[key])%1000/10)
+		fmt.printf("%14s  ", format_amount(accounts[key]))
 		indent_account(key)
 		fmt.println("")
 	}
