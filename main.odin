@@ -6,7 +6,7 @@ import "core:os"
 Config :: struct {
 	filename: string,
 	command: enum {
-		Balance, Register, Export, Print
+		Balance, Register, Export, Print, Help
 	},
 	account: string
 }
@@ -18,6 +18,7 @@ main :: proc() {
 	config, config_err := parse_args()
 	if config_err != "" {
 		fmt.eprintln(config_err)
+		fmt.eprintln("Type 'money help' to get the correct usage info.")
 		os.exit(1)
 	}
 	ledger, err := ledger_parse(config.filename)
@@ -34,6 +35,8 @@ main :: proc() {
 		export_ledger(ledger)
 	case .Print:
 		print_ledger(ledger)
+	case .Help:
+		help()
 	}
 	free_all(context.temp_allocator)
 }
@@ -69,8 +72,10 @@ parse_args :: proc() -> (config: Config, err: ConfigError) {
 			config.command = .Export
 		} else if arg == "print" {
 			config.command = .Print
+		} else if arg == "help" {
+			config.command = .Help
 		} else {
-			err = fmt.aprintf("Unknown command: %s", arg)
+			err = fmt.tprintf("Unknown command: %s", arg)
 			return
 		}
 	}
